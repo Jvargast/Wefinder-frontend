@@ -4,6 +4,9 @@ import logo from '../assets/images/logo.png';
 import bg from '../assets/images/background-login-section.jpeg';
 import google from '../assets/images/google.svg';
 
+import { connect } from 'react-redux';
+import { signInApi } from '../actions';
+
 const Container = styled.div`
 
 `;
@@ -139,6 +142,7 @@ const Google = styled.button`
     transition-duration: 167ms;
     font-size: 20px;
     color: rgba(0, 0, 0, 0.6);
+    cursor: pointer;
     
     &:hover {
       background-color: rgba(207, 207, 207, 0.25);
@@ -165,7 +169,7 @@ const Login = (props) => {
             <img src={bg} alt='bg'/>
           </Hero>
           <Form>
-            <Google>
+            <Google onClick={()=>props.signIn()}>
               <img src={google} alt='google'/>
               Sign in with Google
             </Google>
@@ -173,6 +177,14 @@ const Login = (props) => {
         </Section>
     </Container>
   )
-}
+};
 
-export default Login
+const mapStateToProps = (state) => {
+  return {}
+};
+
+const mapDispatchToProps = (dispatch) =>({
+  signIn: () => dispatch(signInApi()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
