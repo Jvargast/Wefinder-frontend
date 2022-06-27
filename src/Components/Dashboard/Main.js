@@ -10,6 +10,7 @@ import coIcon from "../../assets/images/comment-icon.svg";
 import likeIcon from "../../assets/images/like-icon.svg";
 import sharedIcon from "../../assets/images/shared-icon.svg";
 import sendIcon from "../../assets/images/send-icon.svg";
+import PostModal from "./PostModal"
 
 const Container = styled.div`
   grid-area: main;
@@ -303,6 +304,7 @@ const Main = (props) => {
           </SocialActions>
         </Article>
       </div>
+      <PostModal/>
     </Container>
   );
 };

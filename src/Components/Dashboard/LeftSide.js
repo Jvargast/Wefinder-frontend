@@ -4,11 +4,14 @@ import photo from '../../assets/images/photo.svg';
 import itemIcon from '../../assets/images/item-icon.svg';
 import widgetIcon from '../../assets/images/widget-icon.svg';
 import plus from '../../assets/images/plus-icon.svg';
+import { connect } from "react-redux";
+
 const Container = styled.div`
     grid-area: leftside;
     margin-left: 20px;
 
 `;
+
 
 const ArtCard = styled.div`
     text-align: center;
@@ -163,7 +166,7 @@ const LeftSide = (props) => {
                     <CardBackGround/>
                         <a href="/" style={{pointerEvents:"none", textDecoration:"none"}} >
                             <Photo/>
-                            <Link>Bienvenido de nuevo!</Link>
+                            <Link>Welcome {props.user ? props.user.displayName : " "}! </Link>
                         </a>
                         <a href="/" style={{pointerEvents:"none", textDecoration:"none"}}>
                             <AddPhotoText>Agregar foto</AddPhotoText>
@@ -213,4 +216,10 @@ const LeftSide = (props) => {
     )
 };
 
-export default LeftSide;
+const mapStateToProps = (state) => {
+  return {
+    user: state.userState.user,
+  }
+}
+
+export default connect(mapStateToProps)(LeftSide);

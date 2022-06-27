@@ -6,6 +6,7 @@ import google from '../assets/images/google.svg';
 
 import { connect } from 'react-redux';
 import { signInApi } from '../actions';
+import {Navigate} from 'react-router-dom';
 
 const Container = styled.div`
 
@@ -154,6 +155,11 @@ const Google = styled.button`
 const Login = (props) => {
   return (
     <Container>
+      {
+        props.user && 
+        <Navigate to="/dashboard"/>
+        
+      }
         <Nav>
             <a href="/">
                 <img src={logo} alt='logo'/>
@@ -180,7 +186,9 @@ const Login = (props) => {
 };
 
 const mapStateToProps = (state) => {
-  return {}
+  return {
+    user:state.userState.user,
+  }
 };
 
 const mapDispatchToProps = (dispatch) =>({
@@ -188,3 +196,6 @@ const mapDispatchToProps = (dispatch) =>({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
+
+
+//PARA ELIMINAR

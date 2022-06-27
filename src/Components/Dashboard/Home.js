@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import LeftSide from "./LeftSide";
 import Main from "./Main";
 import RightSide from "./RightSide";
+import { Navigate } from 'react-router';
+import { connect } from 'react-redux';
 
 
 const Container = styled.div`
@@ -53,16 +55,16 @@ const Layout = styled.div`
     padding: 0 5px;
   }
 `;
-const Home = () => {
+const Home = (props) => {
   return (
     <Container>
+      {!props.user && <Navigate to="/"/>  }
       <Section>
         <h5>
-          <a href='/'>Hiring in a hurry? - </a>
+          <a href='/'>Buscando personas? - </a>
         </h5>
         <p>
-          Find talented pros in record time with Upwork and keep business
-          moving.
+         Encuentra personas talentosas en buen tiempo que deseen trabajar contigo y crecer tu negocio.
         </p>
       </Section>
       <Layout>
@@ -74,4 +76,10 @@ const Home = () => {
   )
 }
 
-export default Home;
+const mapStateToProps = (state) => {
+  return {
+    user: state.userState.user,
+  };
+}
+
+export default connect(mapStateToProps)(Home);

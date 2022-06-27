@@ -9,7 +9,8 @@ import dwi from '../../assets/images/down-icon.svg';
 import wi from '../../assets/images/nav-work.svg';
 import userIcon from '../../assets/images/user.svg';
 import { useLocation } from "react-router-dom";
-
+import { connect } from "react-redux";
+import { signOutApi } from "../../actions";
 
 const Container = styled.div`
     background-color: #fff;
@@ -116,17 +117,17 @@ const NavList = styled.li`
   }
 `;
 const SignOut = styled.div`
-  position: absolute;
-  top: 45px;
-  background: white;
-  border-radius: 0 0 5px 5px;
-  width: 100px;
-  height: 60px;
-  font-size: 16px;
-  transition-duration: 167ms;
-  text-align: center;
-  display: none;
-  text-decoration: none;
+position: absolute;
+top: 45px;
+background: white;
+border-radius: 0 0 5px 5px;
+width: 100px;
+height: 40px;
+font-size: 16px;
+transition-duration: 167ms;
+text-align: center;
+display: none;
+cursor: pointer;
   a {
     color: #038d84;
   }
@@ -158,6 +159,7 @@ const User = styled(NavList)`
             color:#038d84;
             border-bottom: 1px solid ;
             width: 70px
+            
 
         }
     }
@@ -169,7 +171,7 @@ const Work = styled(User)`
     border-left: 1px solid rgba(0, 0, 0, 0.08);
 `;
 
-const Header = ({status}) => {
+const Header = (props) => {
 
     let {pathname} = useLocation();
 
@@ -219,18 +221,22 @@ const Header = ({status}) => {
 
                         <User>
                             <a href="/perfil">
-                                <img src={userIcon} alt="user"/>
-                                <span>Yo</span>
-                                <img src={dwi} alt="" />
+                             
+                                {props.user && props.user.photoURL ?  <img src={props.user.photoURL} alt="profile" />
+                                :<img src={userIcon} alt="user"/>}
+                                <span>Yo
+                                    <img src={dwi} alt="" />
+                                </span>
                             </a>
-                            <SignOut>
-                                <a href="/logOut">Cerrar Sesión</a>
+                            <SignOut onClick={()=> props.signOut()}>
+                                <a>Cerrar Sesión</a>
                             </SignOut>
                         </User>
                         <Work>
+                            
                             <a href="/trabajo">
                                 <img src={wi} alt=""/>
-                                <span>Trabajo
+                                <span>Vitrina
                                 <img src={dwi} alt="" />
                                 </span>
                                 
@@ -243,4 +249,14 @@ const Header = ({status}) => {
     )
 }
 
-export default Header;
+const mapStateToProps = (state) => {
+    return {
+        user: state.userState.user,
+    }
+};
+
+const mapDispatchToProps = (dispatch) => ({
+    signOut: () => dispatch(signOutApi()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Header);

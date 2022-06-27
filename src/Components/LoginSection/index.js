@@ -4,12 +4,21 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faUser } from '@fortawesome/free-solid-svg-icons';
 import google from '../../assets/images/google.svg';
 
-const Section = () => {
+import { connect } from 'react-redux';
+import { signInApi } from '../../actions';
+import {Navigate} from 'react-router-dom';
+
+const Section = (props) => {
   const [id, setId] = useState('#unete');
 
   return (
     <>
     <SectionContainer id={id}>
+        {
+        props.user && 
+        <Navigate to="/dashboard"/>
+        
+        }
         <InfoWrapper>
             <Column>
                 
@@ -64,7 +73,7 @@ const Section = () => {
                     </ButtonContainer>
                     <p>¿Ya tienes cuenta?</p>  <LoginButton to='iniciar-sesion'>Inicia Sesión</LoginButton>
                     <Form>
-                        <Google>
+                        <Google onClick={()=>props.signIn()}>
                             <img src={google} alt='google'/>
                             Sign in with Google
                         </Google>
@@ -79,4 +88,15 @@ const Section = () => {
   )
 }
 
-export default Section
+const mapStateToProps = (state) => {
+    return {
+      user:state.userState.user,
+    }
+  };
+  
+  const mapDispatchToProps = (dispatch) =>({
+    signIn: () => dispatch(signInApi()),
+  });
+  
+  export default connect(mapStateToProps, mapDispatchToProps)(Section);
+  
