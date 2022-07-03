@@ -229,12 +229,12 @@ const Header = (props) => {
                                 </span>
                             </a>
                             <SignOut onClick={()=> props.signOut()}>
-                                <a>Cerrar Sesión</a>
+                                <a href="/">Cerrar Sesión</a>
                             </SignOut>
                         </User>
                         <Work>
                             
-                            <a href="/trabajo">
+                            <a href="/virtrina">
                                 <img src={wi} alt=""/>
                                 <span>Vitrina
                                 <img src={dwi} alt="" />

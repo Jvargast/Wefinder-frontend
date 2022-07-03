@@ -49,8 +49,6 @@ const Filters = styled.aside`
     
 `;
 
-
-
 const ProfilesContainer = styled.main`
     grid-column: span 3/span 3;
 
@@ -59,8 +57,6 @@ ul {
     gap: 1.5rem;
     display: grid;
 }
-
-
 `;
 
 const ResultBar = styled.div`

@@ -137,10 +137,8 @@ const RegisterElements = () => {
             </div>
           </Separator>
           <Form>
-            
               <Indicator done={step} />
-              <button onClick={handleProgressBar}>Siguiente</button>
-            
+              <button onClick={handleProgressBar}>Siguiente</button>   
           </Form>
         </FormContainer>
         <Image className="animate__fadeInLeft">

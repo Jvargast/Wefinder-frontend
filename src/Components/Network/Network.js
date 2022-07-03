@@ -14,41 +14,10 @@ const Container = styled.div`
 
 `; */
 
-const Section = styled.section`
-  min-height: 50px;
-  padding: 16px 0;
-  box-sizing: content-box;
-  text-align: center;
-  text-decoration: underline;
-  display: flex;
-  justify-content: center;
-
-  h5 {
-    color: #038d84;
-    font-size: 14px;
-    a {
-      font-weight: 700;
-      color: #038d84;
-    }
-  }
-
-  p {
-    font-size: 14px;
-    color: #434649;
-    font-weight: 600;
-  }
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    padding: 0 5px;
-  }
-`;
-
-
-
 const SearchContainer = styled.div`
   border-bottom-width: 1px;
-
+  padding-bottom: 20px;
+  padding-top: 10px;
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 
@@ -121,18 +90,6 @@ const SearchIcon = styled.div`
 const Network = (props) => {
   return (
     <Container>
-      <Section>
-        <h5>
-          <a href="/" style={{ pointerEvents: "none", textDecoration: "none" }}>
-            ¿Buscando gente? -{" "}
-          </a>
-        </h5>
-        <p>
-          {" "}
-          Conectate con más personas profesionales y mantén tu negocio en
-          movimiento.
-        </p>
-      </Section>
       <SearchContainer>
         <header>
           <div>

@@ -37,6 +37,7 @@ const SharedBox = styled(CommonCard)`
   color: #2b2a2a;
   margin: 0 0 8px;
   background: #e0dbdb;
+  padding-top: 10px;
 
   div {
     button {
@@ -64,6 +65,7 @@ const SharedBox = styled(CommonCard)`
         width: 48px;
         border-radius: 50%;
         margin-right: 8px;
+        height: 48px;
       }
       button {
         margin: 4px 0;

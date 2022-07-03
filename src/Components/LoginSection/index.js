@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {SectionContainer, InfoWrapper, Column, TitleContainer, Image, Separator,SubTitle,ContentContainer, ButtonContainer,Button, ButtonWrapper, LoginButton, Form, Google} from './SectionElements';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faUser } from '@fortawesome/free-solid-svg-icons';
@@ -9,11 +9,10 @@ import { signInApi } from '../../actions';
 import {Navigate} from 'react-router-dom';
 
 const Section = (props) => {
-  const [id, setId] = useState('#unete');
 
   return (
     <>
-    <SectionContainer id={id}>
+    <SectionContainer id="unete">
         {
         props.user && 
         <Navigate to="/dashboard"/>
@@ -71,7 +70,7 @@ const Section = (props) => {
                         <Button to="/inscribete"> <FontAwesomeIcon icon={faUser}/> Soy Emprendedor</Button>
                         <Button to="/empresas"> <FontAwesomeIcon icon={faUser}/> Soy Intraemprendedor</Button>
                     </ButtonContainer>
-                    <p>¿Ya tienes cuenta?</p>  <LoginButton to='iniciar-sesion'>Inicia Sesión</LoginButton>
+                    <p>¿Ya tienes cuenta?</p>  <LoginButton to='/iniciar-sesion'>Inicia Sesión</LoginButton>
                     <Form>
                         <Google onClick={()=>props.signIn()}>
                             <img src={google} alt='google'/>
