@@ -1,4 +1,4 @@
-import React,{useState} from "react";
+import React, { useState, useEffect } from "react";
 import { connect, useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
@@ -68,6 +68,39 @@ const Form = styled.form`
   }
   p {
     color: gray;
+    &.errmsg {
+      background-color: lightpink;
+      color: firebrick;
+      font-weight: bold;
+      padding: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    &.offscreen {
+      display: none;
+    }
+    &.instructions > svg {
+      margin-right: 0.25rem;
+    }
+    &.instructions {
+      font-size: 0.75rem;
+      border-radius: 0.5rem;
+      width: 100%;
+      background: #000;
+      color: #fff;
+      padding: 0.25rem;
+      position: relative;
+      bottom: -10px;
+      width: 400px;
+    }
+    .instructions {
+      font-size: 0.75rem;
+      border-radius: 0.5rem;
+      background: #000;
+      color: #fff;
+      padding: 0.25rem;
+      position: relative;
+      bottom: -10px;
+    }
     a {
       text-decoration: none;
       color: #00a89c;
@@ -120,52 +153,74 @@ const Button = styled.button`
 `;
 
 const RegisterForm = (props) => {
-  
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const EMAIL_REGEX =
+    /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+  const [validEmail, setValidEmail] = useState(false);
+  const [validPwd, setValidPwd] = useState(false);
+  const [validMatch, setValidMatch] = useState(false);
+  const [matchFocus, setMatchFocus] = useState(false);
+  const [errMsg, setErrMsg] = useState("");
+  const [success, setSuccess] = useState(false);
+
   const [state, setState] = useState({
     displayName: "",
     email: "",
-    profilePic:"",
+    profilePic: "",
     password: "",
     confirmPassword: "",
   });
+  useEffect(() => {
+    setValidEmail(EMAIL_REGEX.test(state.email));
+  }, [EMAIL_REGEX, state.email]);
+
+  useEffect(() => {
+    setValidPwd(PWD_REGEX.test(state.password));
+    setValidMatch(state.password === state.confirmPassword);
+  }, [state.password, state.confirmPassword, PWD_REGEX]);
+
+  useEffect(() => {
+    setErrMsg("");
+  }, [state.email, state.password, state.confirmPassword]);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-/*   useEffect(()=>{
+  /*   useEffect(()=>{
     if(user) {
         navigate("/dashboard")
     }
   },[user,navigate]); */
 
-
-  const { displayName,email,profilePic, password, confirmPassword } = state;
+  const { displayName, email, profilePic, password, confirmPassword } = state;
   const handleSubmit = (e) => {
     e.preventDefault();
-    if(password !== confirmPassword) {
-        return;
-    };
-    
-    /* db.collection("users").doc("1").set({
-        name: displayName,
-        email:email,
-        profilePic:profilePic
-    })
-    .then(() => {
-        console.log("Document successfully written!");
-    })
-    .catch((error) => {
-        console.error("Error writing document: ", error);
-    }); */
-    console.log("Empezando registro")
+    if (password !== confirmPassword) {
+      return;
+    }
+    const v2 = PWD_REGEX.test(password);
+    const v3 = EMAIL_REGEX.test(email);
+    if (!v2 || !v3) {
+      setErrMsg("Invalid Entry");
+      return;
+    }
+    setSuccess(true);
     dispatch(registerInitiate(email,password,displayName,profilePic));
-    setState({displayName:"",email:"",profilePic:"",password:"", confirmPassword:""});
     console.log("Registro terminado");
+    setState({
+      displayName: "",
+      email: "",
+      profilePic: "",
+      password: "",
+      confirmPassword: "",
+    });
+    
     navigate("/dashboard");
-
   };
-  const handleChange = (e) =>{
-    setState((p)=>({...p,[e.target.name]:e.target.value}));
+  const handleChange = (e) => {
+    setState((p) => ({ ...p, [e.target.name]: e.target.value }));
   };
   return (
     <Container>
@@ -177,17 +232,94 @@ const RegisterForm = (props) => {
           <SubTitle>
             <h6>Inscríbete en Wefinder</h6>
           </SubTitle>
+          {success ? errMsg : <div></div>}
           <Form onSubmit={handleSubmit}>
             <label>Nombre Completo</label>
-            <input type="text" placeholder="Ingrese su nombre" id="inputName" onChange={e=>handleChange(e)} value={state[displayName]} name="displayName"required></input>
+            <input
+              type="text"
+              placeholder="Ingrese su nombre"
+              id="inputName"
+              onChange={(e) => handleChange(e)}
+              value={state[displayName]}
+              name="displayName"
+              required
+            ></input>
             <label>Correo</label>
-            <input type="text" placeholder="Ingrese su correo" id="inputEmail" onChange={e=>handleChange(e)} value={state[email]} name="email" required></input>
+            <input
+              type="text"
+              placeholder="Ingrese su correo"
+              id="inputEmail"
+              onChange={(e) => handleChange(e)}
+              value={state[email]}
+              name="email"
+              required
+              aria-invalid={validEmail ? "false" : "true"}
+            ></input>
+            <p
+              id="emailnote"
+              className={
+                state.email && !validEmail ? "instructions" : "offscreen"
+              }
+            >
+              Escribe un email válido
+            </p>
             <label>URL foto de perfil</label>
-            <input type="text" placeholder="Foto de perfil (pcional)" id="inputProfilePic" onChange={e=>handleChange(e)} value={state[profilePic]} name="profilePic"></input>
+            <input
+              type="text"
+              placeholder="Foto de perfil (pcional)"
+              id="inputProfilePic"
+              onChange={(e) => handleChange(e)}
+              value={state[profilePic]}
+              name="profilePic"
+            ></input>
             <label>Contraseña</label>
-            <input type="password" placeholder="Ingrese su contraseña" id="inputPassword" onChange={e=>handleChange(e)} value={state[password]} name="password" required></input>
+            <input
+              type="password"
+              placeholder="Ingrese su contraseña"
+              id="inputPassword"
+              onChange={(e) => handleChange(e)}
+              value={state[password]}
+              name="password"
+              required
+              aria-invalid={validPwd ? "false" : "true"}
+            ></input>
+            <p
+                id="pwdnote"
+                className={state.password && !validPwd ? "instructions" : "offscreen"}
+              >
+                8 a 24 caracteres.
+                <br />
+                Se deben incluir letras mayúsculas y minúsculas, un número y un
+                caracter especial
+                <br />
+                Caracteres especiales:{" "}
+                <span aria-label="exclamation mark">!</span>{" "}
+                <span aria-label="at symbol">@</span>{" "}
+                <span aria-label="hashtag">#</span>{" "}
+                <span aria-label="dollar sign">$</span>{" "}
+                <span aria-label="percent">%</span>
+              </p>
             <label>Confirmar contraseña</label>
-            <input type="password" placeholder="Repita la contraseña" id="inputConfirmPassword" onChange={e=>handleChange(e)} value={state[confirmPassword]} name="confirmPassword"required></input>
+            <input
+              type="password"
+              placeholder="Repita la contraseña"
+              id="inputConfirmPassword"
+              onChange={(e) => handleChange(e)}
+              value={state[confirmPassword]}
+              name="confirmPassword"
+              required
+              aria-invalid={validMatch ? "false" : "true"}
+              onFocus={() => setMatchFocus(true)}
+              onBlur={() => setMatchFocus(false)}
+            ></input>
+            <p
+                id="confirmnote"
+                className={
+                  matchFocus && !validMatch ? "instructions" : "offscreen"
+                }
+              >
+                Debe calzar con la primera contraseña
+              </p>
             <ButtonContainer>
               <Button type="submit">Inscríbete</Button>
             </ButtonContainer>
@@ -210,9 +342,9 @@ const RegisterForm = (props) => {
 };
 
 const mapStateToProps = (state) => {
-    return {
-      user:state.userState.user,
-    }
+  return {
+    user: state.userState.user,
   };
+};
 
 export default connect(mapStateToProps)(RegisterForm);

@@ -122,7 +122,7 @@ top: 45px;
 background: white;
 border-radius: 0 0 5px 5px;
 width: 100px;
-height: 40px;
+/* height: 40px; */
 font-size: 16px;
 transition-duration: 167ms;
 text-align: center;
@@ -220,7 +220,7 @@ const Header = (props) => {
                         </NavList>
 
                         <User>
-                            <a href="/perfil">
+                            <a href="/dashboard/perfil">
                              
                                 {props.user && props.user.photoURL ?  <img src={props.user.photoURL} alt="profile" />
                                 :<img src={userIcon} alt="user"/>}

@@ -15,6 +15,7 @@ import { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { getArticlesAPI } from "../../actions";
 import ReactPlayer from "react-player";
+import moment from "moment";
 
 const Container = styled.div`
   grid-area: main;
@@ -194,10 +195,10 @@ const SocialCounts = styled.ul`
       background-color: #e0dbdb;
     }
 
-    a{
-        border: none;
-        text-decoration: none;
-        color: rgba(0, 0, 0, 0.9);
+    a {
+      border: none;
+      text-decoration: none;
+      color: rgba(0, 0, 0, 0.9);
     }
   }
 `;
@@ -217,6 +218,7 @@ const SocialActions = styled.div`
     color: #038d84;
     border: none;
     background-color: #e0dbdb;
+    cursor: pointer;
 
     img {
       width: 14px;
@@ -237,10 +239,92 @@ const Content = styled.div`
     width: 30px;
   }
 `;
+const Comment = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  div {
+    padding: 10px;
+    margin-left: 10px;
+
+    img {
+      border-radius: 50%;
+    }
+  }
+  input {
+    width: 100%;
+    border-radius: 10px;
+    border: none;
+    padding: 5px;
+    margin-right: 10px;
+  }
+  button {
+    margin-right: 10px;
+    border: none;
+    border-radius: 15px;
+    background-color: #038d84;
+    color: white;
+    font-size: 12px;
+    padding: 8px;
+
+    &:hover {
+      background-color: #ff900b;
+    }
+  }
+`;
+const CommentSection = styled.div`
+  display: flex;
+  margin: auto;
+  border-top: 1px solid gray;
+`;
+
+const CommentItems = styled.div`
+  flex: 1;
+  padding: 0.75rem 1.5rem;
+  display: flex;
+
+  img {
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+    object-fit: cover;
+    margin-right: 1rem;
+    margin-left: 1rem;
+  }
+`;
+
+const CommentContent = styled.div`
+  
+  p {
+    font-weight: 700;
+    margin-top: 0, 75rem;
+  }
+`;
+
+const CommentInfo = styled.div`
+  display: flex;
+  justify-items: center;
+  justify-content: space-between;
+
+  h2 {
+    font-weight: 900;
+    margin-top: 1rem;
+    font-size: 14px;
+  }
+  small {
+    line-height: 1.5;
+    font-size: 12px;
+  }
+`;
 
 const Main = (props) => {
   const [showModal, setShowModal] = useState("close");
+  const [showComment, setShowComment] = useState(false);
 
+  const handleShowComment = (e) => {
+    e.preventDefault();
+    setShowComment(!showComment);
+  };
   useEffect(() => {
     props.getArticles();
   }, [props]);
@@ -269,6 +353,7 @@ const Main = (props) => {
         <p>No hay publicaciones</p>
       ) : (
         <Container>
+          
           <SharedBox>
             <div>
               {props.user && props.user.photoURL ? (
@@ -305,67 +390,118 @@ const Main = (props) => {
           </SharedBox>
           <Content>
             {props.loading && <img src={spiner} alt="spin" />}
-            {props.articles.length > 0 && props.articles.map((articles,key)=>(
-            <Article key={key}>
-              <SharedActor>
-                <a href="/profile">
-                  <img src={articles.actor.image} alt="user" />
-                  <div>
-                    <span>{articles.actor.title}</span>
-                    <span>{articles.actor.description}</span>
-                    <span>{articles.actor.date.toDate().toLocaleDateString()}</span>
-                  </div>
-                </a>
-                <button>
-                  <img src={elipsis} alt="elipsis" />
-                </button>
-              </SharedActor>
-              <Description>{articles.description}</Description>
-              <SharedImg>
+            {props.articles.length > 0 &&
+              props.articles.map((articles, key) => (
+                <Article key={key}>
+                  <SharedActor>
+                    <a href="/profile">
+                      <img src={articles.actor.image} alt="user" />
+                      <div>
+                        <span>{articles.actor.title}</span>
+                        <span>{articles.actor.description}</span>
+                        <span>
+                          {articles.actor.date.toDate().toLocaleDateString()}
+                        </span>
+                        <span>{moment(articles.createdAt).fromNow()}</span>
+                      </div>
+                    </a>
+                    <button>
+                      <img src={elipsis} alt="elipsis" />
+                    </button>
+                  </SharedActor>
+                  <Description>{articles.description}</Description>
+                  <SharedImg>
+                    <a href="/">
+                      {!articles.sharedImg && articles.video ? (
+                        <ReactPlayer width={"100%"} url={articles.video} />
+                      ) : (
+                        articles.sharedImg && (
+                          <img src={articles.sharedImg} alt="shared" />
+                        )
+                      )}
+                    </a>
+                  </SharedImg>
+                  <SocialCounts>
+                    <li>
+                      <button>
+                        <img
+                          src="https://static-exp1.licdn.com/sc/h/d310t2g24pvdy4pt1jkedo4yb"
+                          alt="like"
+                        />
+                        <img
+                          src="https://static-exp1.licdn.com/sc/h/5thsbmikm6a8uov24ygwd914f"
+                          alt="comments"
+                        />
+                        <span>75</span>
+                      </button>
+                    </li>
+                    <li>
+                      <a href="/">{articles.comments}</a>
+                    </li>
+                  </SocialCounts>
+                  <SocialActions>
+                    <button>
+                      <img src={likeIcon} alt="like" />
+                      <span>Me gusta</span>
+                    </button>
 
-                <a href="/">
-                  {!articles.sharedImg && articles.video ? <ReactPlayer width={'100%'} url={articles.video}/> : articles.sharedImg && <img src={articles.sharedImg} alt="shared" />}
-                </a>
-              </SharedImg>
-              <SocialCounts>
-                <li>
-                  <button>
-                    <img
-                      src="https://static-exp1.licdn.com/sc/h/d310t2g24pvdy4pt1jkedo4yb"
-                      alt="like"
-                    />
-                    <img
-                      src="https://static-exp1.licdn.com/sc/h/5thsbmikm6a8uov24ygwd914f"
-                      alt="comments"
-                    />
-                    <span>75</span>
-                  </button>
-                </li>
-                <li>
-                  <a href="/">{articles.comments}</a>
-                </li>
-              </SocialCounts>
-              <SocialActions>
-                <button>
-                  <img src={likeIcon} alt="like" />
-                  <span>Me gusta</span>
-                </button>
-                <button>
-                  <img src={coIcon} alt="comment" />
-                  <span>Comentario</span>
-                </button>
-                <button>
-                  <img src={sharedIcon} alt="shared" />
-                  <span>Compartir</span>
-                </button>
-                <button>
-                  <img src={sendIcon} alt="send" />
-                  <span>Enviar</span>
-                </button>
-              </SocialActions>
-            </Article>
-            ))}
+                    <button onClick={handleShowComment}>
+                      <img src={coIcon} alt="comment" />
+                      <span>Comentario</span>
+                    </button>
+
+                    <button>
+                      <img src={sharedIcon} alt="shared" />
+                      <span>Compartir</span>
+                    </button>
+                    <button>
+                      <img src={sendIcon} alt="send" />
+                      <span>Enviar</span>
+                    </button>
+                  </SocialActions>
+                  {showComment ? (
+                    <>
+                      <Comment>
+                        <div>
+                          <img
+                            src={props.user.photoURL}
+                            alt="user"
+                            style={{ width: "48px", height: "48px" }}
+                          />
+                        </div>
+                        <input type="text" placeholder="Añadir un comentario" />
+                        <button>Publicar</button>
+                      </Comment>
+                      <CommentSection>
+                        <CommentItems>
+                          <img
+                            src="https://images.unsplash.com/photo-1542156822-6924d1a71ace?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"
+                            alt="avatar"
+                          />
+                          <CommentContent>
+                            <CommentInfo>
+                              <h2 class="text-lg font-semibold text-gray-900 -mt-1">
+                                Brad Adams{" "}
+                              </h2>
+                              <small class="text-sm text-gray-700">
+                                22h ago
+                              </small>
+                            </CommentInfo>
+                            <p>
+                              Lorem ipsum, dolor sit amet conse. Saepe optio
+                              minus rem dolor sit amet!
+                            </p>
+                          </CommentContent>
+                        </CommentItems>
+                      </CommentSection>
+                    </>
+                  ) : (
+                    <div></div>
+                  )}
+                </Article>
+              ))}
           </Content>
+
           <PostModal showModal={showModal} handlerClick={handlerClick} />
         </Container>
       )}

@@ -103,8 +103,8 @@ const Estado = styled.div`
   div {
     display: flex;
     flex-direction: column;
-    margin-bottom: 15px;
-    margin-right: 6.5px;
+    margin-bottom: 20px;
+    margin-right: 10px;
     position: relative;
     bottom: 0;
 
@@ -142,15 +142,22 @@ const Photo = styled.div`
     margin-left: auto;
     margin-right: auto;
     background-color: gray;
+
+    img {
+      object-fit: cover;
+      width: 100%;
+      height: 100%;
+    }
 `;
 
-const ProfileCard = ({ profile }) => {
+const ProfileCard = ({profile}) => {
   return (
     <Container>
       <ProfileContainer>
-        {profile}
-        <a href="profile/anna">
+        <h1>{profile.name}</h1>
+        <a href={`profile/${profile.userId}`}>
           <Photo>
+            <img src={profile && profile.photoURL ? profile.photoURL:"https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg"} alt="profile"/>
           </Photo>
           <Estado>
             <span></span>
@@ -160,6 +167,9 @@ const ProfileCard = ({ profile }) => {
             </div>
           </Estado>
         </a>
+        <p>
+        {profile.email}
+        </p>
 
       </ProfileContainer>
 

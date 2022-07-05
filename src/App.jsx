@@ -9,6 +9,7 @@ import Network from './Pages/Network';
 import { useEffect } from 'react';
 import { getUserAuth } from './actions';
 import Register from './Pages/Register';
+import Profile from './Pages/Profile';
 
 function App(props) {
   useEffect(() => {
@@ -23,6 +24,7 @@ function App(props) {
         <Route path="/iniciar-sesion" element={<Login/>}/>
         <Route path="/dashboard" element={<Dashboard/>}/>
         <Route path="/dashboard/mi-red" element={<Network/>}/>
+        <Route path="/dashboard/perfil" element={<Profile/>}/>
       </Routes>
     </Router>
   );

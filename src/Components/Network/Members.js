@@ -1,4 +1,7 @@
+import { useEffect } from "react";
+import { connect } from "react-redux";
 import styled from "styled-components";
+import { getUsersAPI } from "../../actions";
 import FilterCard from "./FilterCard";
 import ProfileCard from "./ProfileCard"
 const Bg = styled.div`
@@ -119,10 +122,17 @@ const Members = (props) => {
   const data2 = ['Location'];
   const data3 = ['Concept','Research', 'Early', 'Growth'];
 
-  const profiles = ['profile 1', 'profile 2', 'profile 3', 'profile 4', 'profile 5', 'profile6', 'profile 7'];
+  /* const profiles = ['profile 1', 'profile 2', 'profile 3', 'profile 4', 'profile 5', 'profile6', 'profile 7']; */
+
+  useEffect(() => {
+    props.getUsers();
+  }, [props]);
 
   return (
     <Bg>
+        {props.users.length === 0 ? (
+        <p>No hay usuarios</p>
+      ) : (
     <Container>
       <h2>Miembros</h2>
       <Profiles>
@@ -134,7 +144,7 @@ const Members = (props) => {
         </Filters>
         <ProfilesContainer>
             <ul>
-                {profiles.map((item, i) => (<ProfileCard profile={item} key={i}/>))}
+                {props.users.length > 0 && props.users.map((user, i) => (<ProfileCard profile={user} key={i}/>))}
             </ul>
             <ResultBar>
                 <div>
@@ -169,8 +179,23 @@ const Members = (props) => {
         </ProfilesContainer>
       </Profiles>
     </Container>
+     )}
     </Bg>
   );
 };
 
-export default Members;
+
+
+const mapStateToProps = (state) => {
+    return {
+      loading: state.articleState.loading,
+      user: state.userState.user,
+      users: state.userState.users,
+    };
+  };
+  
+  const mapDispatchToProps = (dispatch) => ({
+    getUsers: () => dispatch(getUsersAPI()),
+  });
+  
+  export default connect(mapStateToProps, mapDispatchToProps)(Members);
