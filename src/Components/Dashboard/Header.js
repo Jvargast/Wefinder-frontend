@@ -4,11 +4,10 @@ import home from '../../assets/images/nav-home.svg';
 import net from '../../assets/images/nav-network.svg';
 import works from '../../assets/images/nav-jobs.svg';
 import mjs from '../../assets/images/nav-messaging.svg';
-import nt from '../../assets/images/nav-notifications.svg';
 import dwi from '../../assets/images/down-icon.svg';
 import wi from '../../assets/images/nav-work.svg';
 import userIcon from '../../assets/images/user.svg';
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { connect } from "react-redux";
 import { signOutApi } from "../../actions";
 
@@ -212,29 +211,22 @@ const Header = (props) => {
                                 <span>Mensajes</span>
                             </a>
                         </NavList>
-                        <NavList  >
-                            <a href="/notificaciones">
-                                <img src={nt} alt="home"/>
-                                <span>Notificaciones</span>
-                            </a>
-                        </NavList>
-
                         <User>
-                            <a href="/dashboard/perfil">
+                            <Link to="/dashboard/perfil/:username">
                              
                                 {props.user && props.user.photoURL ?  <img src={props.user.photoURL} alt="profile" />
                                 :<img src={userIcon} alt="user"/>}
                                 <span>Yo
                                     <img src={dwi} alt="" />
                                 </span>
-                            </a>
+                            </Link>
                             <SignOut onClick={()=> props.signOut()}>
                                 <a href="/">Cerrar Sesión</a>
                             </SignOut>
                         </User>
                         <Work>
                             
-                            <a href="/virtrina">
+                            <a href="/vitrina">
                                 <img src={wi} alt=""/>
                                 <span>Vitrina
                                 <img src={dwi} alt="" />

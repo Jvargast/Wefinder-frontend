@@ -6,7 +6,7 @@ import sharedVideoIcon from "../../assets/images/shared-video-icon.svg";
 import sharedCommentIcon from "../../assets/images/comment-icon.svg";
 import { useState } from "react";
 import ReactPlayer from "react-player";
-import { connect } from "react-redux";
+import { connect, useSelector } from "react-redux";
 import firebase from "firebase";
 import { postArticleAPI } from "../../actions";
 
@@ -174,7 +174,7 @@ const PostModal = (props) => {
   const [sharedImage, setSharedImage] = useState("");
   const [videoLink, setVideoLink] = useState("");
   const [assetArea, setAssetArea] = useState("");
-
+  const {user} = useSelector((state)=>({user:state.userState.user}));
   const handleChange = (e) => {
     const image = e.target.files[0];
 
@@ -203,8 +203,9 @@ const PostModal = (props) => {
         video: videoLink,
         user: props.user,
         description: editorText,
-        timestamp: firebase.firestore.Timestamp.now()
-    };
+        timestamp: firebase.firestore.Timestamp.now(),
+        userId: user.uid,
+      };
 
     props.postArticle(payload);
     reset(e);

@@ -24,7 +24,7 @@ function App(props) {
         <Route path="/iniciar-sesion" element={<Login/>}/>
         <Route path="/dashboard" element={<Dashboard/>}/>
         <Route path="/dashboard/mi-red" element={<Network/>}/>
-        <Route path="/dashboard/perfil" element={<Profile/>}/>
+        <Route path="/dashboard/perfil/:username" element={<Profile/>}/>
       </Routes>
     </Router>
   );

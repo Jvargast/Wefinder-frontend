@@ -7,7 +7,7 @@ import logger from 'redux-logger'
 
 //const preloadedState = {};
 const store = configureStore({
-    middleware:[thunk,logger],
+    middleware:[thunk],
     reducer: rootReducer
 });
 

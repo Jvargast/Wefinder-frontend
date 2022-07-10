@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import LeftSide from "./LeftSide";
 import Main from "./Main";
-/* import RightSide from "./RightSide"; */
+import RightSide from "./RightSide";
 import { Navigate } from 'react-router';
 import { connect } from 'react-redux';
 
@@ -51,7 +51,7 @@ const Layout = styled.div`
   row-gap: 25px;
   padding-top: 10px;
   /* grid-template-row: auto; */
-  margin: 25px 0;
+
   @media (max-width: 768px) {
     display: flex;
     flex-direction: column;
@@ -59,12 +59,13 @@ const Layout = styled.div`
   }
 `;
 const Home = (props) => {
+
   return (
     <Container>
       {!props.user && <Navigate to="/"/>  }
       <Section>
         <h5>
-          <a href='/dashboard/mi-red'>Buscando personas? - </a>
+          <a href='/dashboard/mi-red'>¿Buscando personas profesionales? - </a>
         </h5>
         <p>
          Encuentra personas talentosas en buen tiempo que deseen trabajar contigo y crecer tu negocio.
@@ -73,7 +74,7 @@ const Home = (props) => {
       <Layout>
         <LeftSide/>
         <Main />
-{/*         <RightSide /> */}
+        <RightSide />
       </Layout>
     </Container>
   )

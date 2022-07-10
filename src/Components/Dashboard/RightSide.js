@@ -88,8 +88,8 @@ const RightSide = (props) => {
               <Avatar />
             </a>
             <div>
-              <span>#Linkedin</span>
-              <button>Follow</button>
+              <span>#Recomendaciones</span>
+              <button>Seguir</button>
             </div>
           </li>
           <li>
@@ -98,7 +98,7 @@ const RightSide = (props) => {
             </a>
             <div>
               <span>#Video</span>
-              <button>Follow</button>
+              <button>Seguir</button>
             </div>
           </li>
         </FeedList>

@@ -5,17 +5,24 @@ import eIcon from "../../assets/images/event-icon.svg";
 import vIcon from "../../assets/images/video-icon.svg";
 import aIcon from "../../assets/images/article-icon.svg";
 import elipsis from "../../assets/images/elipsis-icon.svg";
-import coIcon from "../../assets/images/comment-icon.svg";
-import likeIcon from "../../assets/images/like-icon.svg";
 import sharedIcon from "../../assets/images/shared-icon.svg";
 import sendIcon from "../../assets/images/send-icon.svg";
 import spiner from "../../assets/images/spin-loader-icon.svg";
+import closeIcon from "../../assets/images/close-icon.svg";
 import PostModal from "./PostModal";
 import { useState, useEffect } from "react";
-import { connect } from "react-redux";
+import { connect, useSelector } from "react-redux";
 import { getArticlesAPI } from "../../actions";
 import ReactPlayer from "react-player";
 import moment from "moment";
+/* import CommentPost from "./CommentPost"; */
+import PostModalPhoto from "./PostModalPhoto";
+import db from "../../firebase";
+import firebase from "firebase/app";
+import "firebase/firestore";
+import { useRef } from "react";
+import Comments from "./Comments";
+import { Link } from "react-router-dom";
 
 const Container = styled.div`
   grid-area: main;
@@ -52,6 +59,8 @@ const SharedBox = styled(CommonCard)`
       display: flex;
       align-items: center;
       font-weight: 600;
+      transition: ease-out;
+      cursor: pointer;
 
       img {
         width: 15px;
@@ -90,6 +99,10 @@ const SharedBox = styled(CommonCard)`
         }
         span {
           color: #038d84;
+
+          &:hover {
+            color: #ffb900;
+          }
         }
       }
     }
@@ -188,6 +201,7 @@ const SocialCounts = styled.ul`
   li {
     margin-right: 5px;
     font-size: 12px;
+    background-color: #e0dbdb;
 
     button {
       display: flex;
@@ -218,13 +232,13 @@ const SocialActions = styled.div`
     color: #038d84;
     border: none;
     background-color: #e0dbdb;
+    border-radius: 5px;
     cursor: pointer;
-
+    svg,
     img {
       width: 14px;
       height: 14px;
     }
-
     @media (min-width: 768px) {
       span {
         margin-left: 8px;
@@ -239,95 +253,138 @@ const Content = styled.div`
     width: 30px;
   }
 `;
-const Comment = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  div {
-    padding: 10px;
-    margin-left: 10px;
 
-    img {
-      border-radius: 50%;
-    }
-  }
-  input {
-    width: 100%;
-    border-radius: 10px;
-    border: none;
-    padding: 5px;
-    margin-right: 10px;
-  }
-  button {
-    margin-right: 10px;
-    border: none;
-    border-radius: 15px;
-    background-color: #038d84;
-    color: white;
-    font-size: 12px;
-    padding: 8px;
+export function Actions({
+  docId,
+  totalLikes,
+  likedPhoto,
+  handleFocus,
+}) {
+  const { user } = useSelector((state) => ({ user: state.userState.user }));
+  const [toggleLiked, setToggleLikes] = useState(likedPhoto);
+  const [likes, setLikes] = useState(totalLikes);
 
-    &:hover {
-      background-color: #ff900b;
-    }
-  }
-`;
-const CommentSection = styled.div`
-  display: flex;
-  margin: auto;
-  border-top: 1px solid gray;
-`;
+  const handleToggleLiked = async () => {
+    setToggleLikes((toggleLiked) => !toggleLiked);
 
-const CommentItems = styled.div`
-  flex: 1;
-  padding: 0.75rem 1.5rem;
-  display: flex;
+    await db
+      .collection("articles")
+      .doc(docId)
+      .update({
+        likes: toggleLiked
+          ? firebase.firestore.FieldValue.arrayRemove(user.uid)
+          : firebase.firestore.FieldValue.arrayUnion(user.uid),
+      });
+    setLikes((likes) => (toggleLiked ? likes - 1 : likes + 1));
+  };
 
-  img {
-    width: 40px;
-    height: 40px;
-    border-radius: 100%;
-    object-fit: cover;
-    margin-right: 1rem;
-    margin-left: 1rem;
-  }
-`;
+  return (
+    <>
+      <SocialCounts>
+        <li>
+          <button>
+            <img
+              src="https://static-exp1.licdn.com/sc/h/d310t2g24pvdy4pt1jkedo4yb"
+              alt="like"
+            />
+            <span>{likes === 1 ? `${likes} like` : `${likes} likes`}</span>
+          </button>
+        </li>
+      </SocialCounts>
+      <SocialActions>
+        <button
+          onClick={handleToggleLiked}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              handleToggleLiked();
+            }
+          }}
+          style={
+            toggleLiked ? { backgroundColor: "#038d84" } : { fill: "black" }
+          }
+        >
+          <svg
+            version="1.1"
+            id="Capa_1"
+            xmlns="http://www.w3.org/2000/svg"
+            x="0px"
+            y="0px"
+            viewBox="0 0 306.033 306.033"
+            style={toggleLiked ? { fill: "#ffb900" } : { fill: "black" }}
+          >
+            <path
+              d="M302.997,205.216l0.02-24.171c0-0.245-0.024-0.484-0.036-0.727l-0.013-19.285c0-35.841-29.158-65-65-65
+	c-0.014,0-0.025,0.002-0.039,0.002h-44.328l15.549-30.896c3.109-6.203,4.752-13.167,4.752-20.14c0-24.813-20.188-45-45-45
+	c-17.156,0-32.584,9.535-40.264,24.887L92.222,97.713c-2.061-1.065-4.395-1.678-6.875-1.678h-67.33c-8.284,0-15,6.716-15,15v179.998
+	c0,8.284,6.716,15,15,15h67.33c8.284,0,15-6.716,15-15v-2.122c16.84,11.09,36.693,17.122,57.621,17.122h80
+	c35.842,0,65-29.159,65-64.988l0.004-5.126c0.018-0.298,0.045-0.594,0.045-0.895L302.997,205.216z M70.347,276.033h-37.33V126.035
+	h37.33V276.033z M237.968,276.033h-80c-22.529,0-43.313-9.791-57.621-26.989V148.541l55.121-110.234
+	c2.564-5.123,7.711-8.307,13.434-8.307c8.271,0,15,6.729,15,15c0,2.362-0.529,4.615-1.561,6.675l-26.48,52.617
+	c-2.34,4.65-2.103,10.181,0.629,14.612c2.73,4.432,7.564,7.131,12.77,7.131h68.709c0.009,0,0.018-0.001,0.025-0.001
+	c19.287,0.014,34.975,15.709,34.975,35.009l0.029,44.17l-0.029,35.82C272.968,260.332,257.267,276.033,237.968,276.033z"
+            />
+          </svg>
+          <span style={toggleLiked ? { color: "#ffb900" } : { fill: "black" }}>
+            Me gusta
+          </span>
+        </button>
+        <button
+          onClick={handleFocus}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              handleFocus();
+            }
+          }}
+        >
+          <svg
+            width="14px"
+            height="14px"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M12,2A10,10,0,0,0,2,12a9.89,9.89,0,0,0,2.26,6.33l-2,2a1,1,0,0,0-.21,1.09A1,1,0,0,0,3,22h9A10,10,0,0,0,12,2Zm0,18H5.41l.93-.93a1,1,0,0,0,0-1.41A8,8,0,1,1,12,20Z" />
+          </svg>
+          <span>Comentario</span>
+        </button>
 
-const CommentContent = styled.div`
-  
-  p {
-    font-weight: 700;
-    margin-top: 0, 75rem;
-  }
-`;
-
-const CommentInfo = styled.div`
-  display: flex;
-  justify-items: center;
-  justify-content: space-between;
-
-  h2 {
-    font-weight: 900;
-    margin-top: 1rem;
-    font-size: 14px;
-  }
-  small {
-    line-height: 1.5;
-    font-size: 12px;
-  }
-`;
-
+        <button>
+          <img src={sharedIcon} alt="shared" />
+          <span>Compartir</span>
+        </button>
+        <button>
+          <img src={sendIcon} alt="send" />
+          <span>Enviar</span>
+        </button>
+      </SocialActions>
+    </>
+  );
+}
 const Main = (props) => {
   const [showModal, setShowModal] = useState("close");
   const [showComment, setShowComment] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [showModalPhoto, setModalPhoto] = useState("close");
 
+  //Likes function
+  const commmentInput = useRef(null);
+  const handleFocus = () => commmentInput.current.focus();
+  //prueba
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    db.collection("articles")
+      .orderBy("actor.date", "desc")
+      .onSnapshot((snapshot) => {
+        setPosts(
+          snapshot.docs.map((doc) => ({ id: doc.id, post: doc.data() }))
+        );
+      });
+  }, []);
+  //
   const handleShowComment = (e) => {
     e.preventDefault();
     setShowComment(!showComment);
   };
-  useEffect(() => {
-    props.getArticles();
-  }, [props]);
 
   const handlerClick = (e) => {
     e.preventDefault();
@@ -347,13 +404,28 @@ const Main = (props) => {
     }
   };
 
+  const handlerPost = (e) => {
+    e.preventDefault();
+
+    switch (showModalPhoto) {
+      case "open":
+        setModalPhoto("close");
+        break;
+      case "close":
+        setModalPhoto("open");
+        break;
+      default:
+        setModalPhoto("close");
+        break;
+    }
+  };
+
   return (
     <>
-      {props.articles.length === 0 ? (
+      {posts.length === 0 ? (
         <p>No hay publicaciones</p>
       ) : (
         <Container>
-          
           <SharedBox>
             <div>
               {props.user && props.user.photoURL ? (
@@ -367,13 +439,23 @@ const Main = (props) => {
               >
                 Crear publicación
               </button>
+              <div></div>
             </div>
 
             <div>
-              <button>
+              {selectedFile && (
+                <div>
+                  <div onClick={() => setSelectedFile(null)}>
+                    <img src={closeIcon} alt="closed" />
+                  </div>
+                  <img src={selectedFile} alt="" />
+                </div>
+              )}
+              <button onClick={handlerPost}>
                 <img src={pIcon} alt="p-icon" />
                 <span>Foto</span>
               </button>
+
               <button>
                 <img src={vIcon} alt="v-icon" />
                 <span>Video</span>
@@ -390,119 +472,70 @@ const Main = (props) => {
           </SharedBox>
           <Content>
             {props.loading && <img src={spiner} alt="spin" />}
-            {props.articles.length > 0 &&
-              props.articles.map((articles, key) => (
-                <Article key={key}>
+            {posts.length > 0 &&
+              posts.map(({ id, post }) => (
+                <Article key={id}>
                   <SharedActor>
-                    <a href="/profile">
-                      <img src={articles.actor.image} alt="user" />
+                    <Link to={`/p/${post.actor.title}`}>
+                      <img src={post.actor.image} alt="user" />
                       <div>
-                        <span>{articles.actor.title}</span>
-                        <span>{articles.actor.description}</span>
+                        <span>{post.actor.title}</span>
+                        <span>{post.actor.description}</span>
                         <span>
-                          {articles.actor.date.toDate().toLocaleDateString()}
+                          {post.actor.date.toDate().toLocaleDateString()}
                         </span>
-                        <span>{moment(articles.createdAt).fromNow()}</span>
+                        <span>{moment(post.createdAt).fromNow()}</span>
                       </div>
-                    </a>
+                    </Link>
                     <button>
                       <img src={elipsis} alt="elipsis" />
                     </button>
                   </SharedActor>
-                  <Description>{articles.description}</Description>
+                  <Description>{post.description}</Description>
                   <SharedImg>
                     <a href="/">
-                      {!articles.sharedImg && articles.video ? (
-                        <ReactPlayer width={"100%"} url={articles.video} />
+                      {!post.sharedImg && post.video ? (
+                        <ReactPlayer width={"100%"} url={post.video} />
                       ) : (
-                        articles.sharedImg && (
-                          <img src={articles.sharedImg} alt="shared" />
+                        post.sharedImg && (
+                          <img src={post.sharedImg} alt="shared" />
                         )
                       )}
                     </a>
                   </SharedImg>
-                  <SocialCounts>
-                    <li>
-                      <button>
-                        <img
-                          src="https://static-exp1.licdn.com/sc/h/d310t2g24pvdy4pt1jkedo4yb"
-                          alt="like"
-                        />
-                        <img
-                          src="https://static-exp1.licdn.com/sc/h/5thsbmikm6a8uov24ygwd914f"
-                          alt="comments"
-                        />
-                        <span>75</span>
-                      </button>
-                    </li>
-                    <li>
-                      <a href="/">{articles.comments}</a>
-                    </li>
-                  </SocialCounts>
-                  <SocialActions>
-                    <button>
-                      <img src={likeIcon} alt="like" />
-                      <span>Me gusta</span>
-                    </button>
+                  <Actions
+                    docId={id}
+                    totalLikes={post.likes.length}
+                    likedPhoto={post.actor.userLikedPhoto}
+                    handleFocus={handleFocus}
+                    commentAction={handleShowComment}
+                  />
+                  <Comments
+                    docId={id}
+                    comments={post.comments}
+                    posted={props.user}
+                    commentInput={commmentInput}
+                  />
 
-                    <button onClick={handleShowComment}>
-                      <img src={coIcon} alt="comment" />
-                      <span>Comentario</span>
-                    </button>
-
-                    <button>
-                      <img src={sharedIcon} alt="shared" />
-                      <span>Compartir</span>
-                    </button>
-                    <button>
-                      <img src={sendIcon} alt="send" />
-                      <span>Enviar</span>
-                    </button>
-                  </SocialActions>
-                  {showComment ? (
-                    <>
-                      <Comment>
-                        <div>
-                          <img
-                            src={props.user.photoURL}
-                            alt="user"
-                            style={{ width: "48px", height: "48px" }}
-                          />
-                        </div>
-                        <input type="text" placeholder="Añadir un comentario" />
-                        <button>Publicar</button>
-                      </Comment>
-                      <CommentSection>
-                        <CommentItems>
-                          <img
-                            src="https://images.unsplash.com/photo-1542156822-6924d1a71ace?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"
-                            alt="avatar"
-                          />
-                          <CommentContent>
-                            <CommentInfo>
-                              <h2 class="text-lg font-semibold text-gray-900 -mt-1">
-                                Brad Adams{" "}
-                              </h2>
-                              <small class="text-sm text-gray-700">
-                                22h ago
-                              </small>
-                            </CommentInfo>
-                            <p>
-                              Lorem ipsum, dolor sit amet conse. Saepe optio
-                              minus rem dolor sit amet!
-                            </p>
-                          </CommentContent>
-                        </CommentItems>
-                      </CommentSection>
-                    </>
+                  {/* {showComment ? (
+                    <CommentPost
+                      key={id}
+                      data={props.user}
+                      post={post}
+                      postId={id}
+                    />
                   ) : (
                     <div></div>
-                  )}
+                  )} */}
                 </Article>
               ))}
           </Content>
 
           <PostModal showModal={showModal} handlerClick={handlerClick} />
+          <PostModalPhoto
+            showModalPhoto={showModalPhoto}
+            handlerPost={handlerPost}
+          />
         </Container>
       )}
     </>
@@ -514,6 +547,7 @@ const mapStateToProps = (state) => {
     loading: state.articleState.loading,
     user: state.userState.user,
     articles: state.articleState.articles,
+    isLoading: state.articleState.loading,
   };
 };
 

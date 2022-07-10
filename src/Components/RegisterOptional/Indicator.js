@@ -46,7 +46,7 @@ const Indicator = ({ done }) => {
 
       setStyle(newStyle);
     }, 200);
-  });
+  },[done]);
 
   return (
     <ProgresMainWrapper>
